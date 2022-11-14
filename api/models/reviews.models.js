@@ -16,23 +16,18 @@ exports.selectReviews = () => {
 };
 
 exports.selectReviewComments = (review_id) => {
-  if (/\d/.test(review_id[0])) {
-    if (+review_id > 0 && +review_id <= 13){
-    return db
-      .query(
-        `
+  return db
+    .query(
+      `
     SELECT * FROM comments JOIN users ON users.username = comments.author WHERE review_id = $1 ORDER BY created_at DESC;
     `,
-        [review_id]
-      )
-      .then((result) => {
+      [review_id]
+    )
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      } else {
         return result.rows;
-      });
-    }
-    else {
-        return Promise.reject({status: 404, msg: 'Not found'})
-    }
-  } else {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
+      }
+    });
 };
