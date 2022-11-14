@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { getCategories } = require("./controllers/games.controllers.js");
+const { getCategories } = require("./controllers/categories.controllers.js");
 const {
   getReviews,
   getReviewsById,
@@ -21,6 +21,15 @@ app.use((err, req, res, next) => {
     next(err);
   }
 });
+
+app.use((err, req, res, next) => {
+    if(err.code === '22P02') {
+        res.status(400).send({msg: 'Bad request'})
+    } else {
+        next(err)
+    }
+})
+
 app.use((err, req, res, next) => {
   console.log(err, "internal server error"); // this log is intentional and acts as an error handler
   res.sendStatus(500);

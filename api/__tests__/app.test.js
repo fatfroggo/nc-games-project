@@ -95,9 +95,17 @@ describe("/api/reviews/review:id", () => {
           );
         });
     });
-    test("GET 400 - returns a 400 Bad request error when given an invalid or nonexistent review_id", () => {
+    test("GET 404 - returns a 404 not found error when given a nonexistent review_id", () => {
       return request(app)
         .get("/api/reviews/90")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not found")
+        })
+    })
+    test("GET 400 - returns a bad request error when given an invalid id", () => {
+        return request(app)
+        .get("/api/reviews/hello")
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toEqual("Bad request")
