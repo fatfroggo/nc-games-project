@@ -101,7 +101,7 @@ describe("/api/reviews/:review_id/comments", () => {
         expect(body.msg).toEqual("Bad request")
     })
   })
-  test("GET 400 - returns an error if given a valid but non existent input for review_id", () => {
+  test("GET 404 - returns an error if given a valid but non existent input for review_id", () => {
     return request(app)
     .get("/api/reviews/999/comments")
     .expect(404)
