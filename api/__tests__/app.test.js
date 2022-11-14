@@ -37,3 +37,38 @@ describe("/api/categories", () => {
   });
 });
     
+describe("/api/reviews", () => {
+    test("GET 200 - Responds with an array of review objects in the correct format", () => {
+        return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+            const { reviews } = body
+            expect(reviews) .toBeInstanceOf(Array)
+            expect(reviews.length).toBe(13)
+            reviews.forEach((review) => {
+                expect(review).toEqual(
+                    expect.objectContaining({
+                        owner: expect.any(String),
+                        title: expect.any(String),
+                        review_id: expect.any(Number),
+                        category: expect.any(String),
+                        review_img_url: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        designer: expect.any(String),
+                        comment_count: expect.any(Number)
+                    })
+                )
+            })
+        })
+    })
+    test("Response array is sorted by descending date", () => {
+        return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.reviews).toBeSortedBy("created_at", { coerce: true })
+        })
+    })
+})
