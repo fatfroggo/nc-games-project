@@ -20,7 +20,7 @@ app.use((err, req, res, next) => {
     }
 })
 app.use((err, req, res, next) => {
-    console.log(err, "internal server error")
+    console.log(err, "internal server error") // this log is intentional and acts as an error handler
     res.sendStatus(500)
 })
 
