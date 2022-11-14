@@ -12,7 +12,6 @@ exports.selectReviews = () => {
     `
     )
     .then((result) => {
-      console.log(result);
       return result.rows;
     });
 }
