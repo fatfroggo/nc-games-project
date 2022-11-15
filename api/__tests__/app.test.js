@@ -93,6 +93,16 @@ describe("/api/reviews/:review_id/comments", () => {
         });
       });
   });
+  test("GET 200 - returns an empty array when given a valid review ID when there are no comments", () => {
+    return request(app)
+      .get("/api/reviews/6/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments.length).toBe(0)
+  })
+})
   test("GET 400 - returns an error if given an invalid data type for review_id", () => {
     return request(app)
     .get("/api/reviews/hello/comments")
