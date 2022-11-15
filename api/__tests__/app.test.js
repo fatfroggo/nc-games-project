@@ -109,4 +109,45 @@ describe("/api/reviews/:review_id/comments", () => {
         expect(body.msg).toEqual("Not found")
     })
   })
+
 });
+
+describe("/api/reviews/review:id", () => {
+    test("GET 200 - returns a review object corresponding to the given review id", () => {
+      return request(app)
+        .get("/api/reviews/9")
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toEqual(
+            expect.objectContaining({
+              review_id: 9,
+              title: 'A truly Quacking Game; Quacks of Quedlinburg',
+              review_body: "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
+              designer: 'Wolfgang Warsch',
+              review_img_url: 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+              votes: 10,
+              category: 'social deduction',
+              owner: 'mallionaire',
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    test("GET 404 - returns a 404 not found error when given a nonexistent review_id", () => {
+      return request(app)
+        .get("/api/reviews/90")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not found")
+        })
+    })
+    test("GET 400 - returns a bad request error when given an invalid id", () => {
+        return request(app)
+        .get("/api/reviews/hello")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request")
+        })
+    })
+  });

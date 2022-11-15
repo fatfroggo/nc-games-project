@@ -15,6 +15,27 @@ exports.selectReviews = () => {
     });
 };
 
+exports.selectReviewsById = (review_id) => {
+  return db
+    .query(
+      `
+    SELECT review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at
+    FROM reviews 
+    JOIN users ON users.username = reviews.owner JOIN categories ON categories.slug = reviews.category
+    WHERE review_id = $1
+    ORDER BY created_at DESC;
+    `,
+      [review_id]
+    )
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" })
+      } else {
+        return result.rows[0];
+      }
+    });
+};
+
 exports.selectReviewComments = (review_id) => {
   return db
     .query(
