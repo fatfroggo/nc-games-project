@@ -4,10 +4,12 @@ const { getCategories } = require("./controllers/categories.controllers.js");
 const {
   getReviews, getReviewComments,
   getReviewsById,
+  postComments
 } = require("./controllers/rewiews.controllers.js");
 const { getUsers } = require("./controllers/users.controllers.js")
 
 const app = express();
+app.use(express.json())
 
 app.get("/api/categories", getCategories);
 
@@ -18,6 +20,9 @@ app.get("/api/reviews/:review_id", getReviewsById);
 app.get("/api/users", getUsers)
 
 app.get("/api/reviews/:review_id/comments", getReviewComments)
+
+app.post("/api/reviews/:review_id/comments", postComments)
+
 
 app.use((err, req, res, next) => {
   if (err.status) {
