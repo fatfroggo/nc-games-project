@@ -35,3 +35,25 @@ exports.selectReviewsById = (review_id) => {
       }
     });
 };
+
+
+exports.addComments = (newComment, review_id) => {
+  if(
+    "username" in newComment &&
+    "body" in newComment
+  ){
+  return db.query(`
+    INSERT INTO comments (author, body, review_id)
+    VALUES
+    ($1, $2, $3)
+    RETURNING *
+  `, [newComment.username, newComment.body, review_id])
+    .then((result) => {
+      console.log(result, "result")
+      return result.rows[0]
+    })
+  }
+  else {
+    return Promise.reject({ status : 400, msg : "Bad request"})
+  }
+}
