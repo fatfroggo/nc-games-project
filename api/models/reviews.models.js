@@ -48,7 +48,6 @@ exports.addComments = (newComment, review_id) => {
     RETURNING *
   `, [newComment.username, newComment.body, review_id])
     .then((result) => {
-      console.log(result, "result")
       return result.rows[0]
     })
   }
