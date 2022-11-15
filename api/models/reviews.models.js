@@ -37,3 +37,16 @@ exports.selectReviewsById = (review_id) => {
       }
     });
 };
+
+exports.selectReviewComments = (review_id) => {
+  return db
+    .query(
+      `
+    SELECT * FROM comments JOIN users ON users.username = comments.author WHERE review_id = $1 ORDER BY created_at DESC;
+    `,
+      [review_id]
+    )
+    .then((result) => {
+        return result.rows;
+    });
+};
