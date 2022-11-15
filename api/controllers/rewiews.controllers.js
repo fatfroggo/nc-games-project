@@ -1,7 +1,9 @@
 const {
   selectReviews,
   selectReviewComments,
-  selectReviewsById, updateReviews, addComments,
+  selectReviewsById,
+  updateReviews,
+  addComments,
 } = require("../models/reviews.models.js");
 
 exports.getReviews = (req, res, next) => {
@@ -35,33 +37,34 @@ exports.getReviewsById = (req, res, next) => {
       res.status(200).send({ review });
     })
     .catch((err) => {
-        next(err)
-    })
-}
+      next(err);
+    });
+};
 
 exports.patchReviewById = (req, res, next) => {
-    const { review_id } = req.params;
-    const { incVotes } = req.body;exports.postComments = (req, res, next) => {
-    const { review_id } = req.params;
-    const newComment = req.body;
-    selectReviewsById(review_id)
+  const { review_id } = req.params;
+  const { incVotes } = req.body;
+
+  updateReviews(review_id, incVotes)
+    .then((review) => {
+      res.status(202).send({ review });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postComments = (req, res, next) => {
+  const { review_id } = req.params;
+  const newComment = req.body;
+  selectReviewsById(review_id)
     .then(() => {
-        return addComments(newComment, review_id)
+      return addComments(newComment, review_id);
     })
     .then((comment) => {
-        res.status(201).send({ comment })
+      res.status(201).send({ comment });
     })
     .catch((err) => {
-        next(err)
-    })
-}
-
-    updateReviews(review_id, incVotes)
-    .then((review) => {
-        res.status(202).send({ review })
-    })
-    .catch((err) => {
-        next(err)
-    })
-}
-
+      next(err);
+    });
+};
