@@ -38,6 +38,7 @@ exports.selectReviewsById = (review_id) => {
 
 exports.updateReviews = (review_id, incVotes) => {
   
+
   return db.query(`
     UPDATE reviews SET votes = (votes + $1) WHERE review_id = $2 RETURNING *;
   `, [incVotes, review_id])
@@ -50,3 +51,15 @@ exports.updateReviews = (review_id, incVotes) => {
     }
   })
 }
+exports.selectReviewComments = (review_id) => {
+  return db
+    .query(
+      `
+    SELECT * FROM comments JOIN users ON users.username = comments.author WHERE review_id = $1 ORDER BY created_at DESC;
+    `,
+      [review_id]
+    )
+    .then((result) => {
+        return result.rows;
+    });
+};
