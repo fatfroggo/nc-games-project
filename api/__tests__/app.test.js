@@ -124,6 +124,44 @@ describe("/api/reviews/:review_id/comments", () => {
 });
 
 describe("/api/reviews/review:id", () => {
+    test("GET 200 - returns a review object corresponding to the given review id", () => {
+      return request(app)
+        .get("/api/reviews/9")
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toEqual(
+            expect.objectContaining({
+              review_id: 9,
+              title: 'A truly Quacking Game; Quacks of Quedlinburg',
+              review_body: expect.any(String),
+              designer: expect.any(String),
+              review_img_url: expect.any(String),
+              votes: 10,
+              category: 'social deduction',
+              owner: 'mallionaire',
+              created_at: expect.any(String),
+              comment_count: expect.any(Number)
+            })
+          );
+        });
+    });
+    test("GET 404 - returns a 404 not found error when given a nonexistent review_id", () => {
+      return request(app)
+        .get("/api/reviews/90")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not found")
+        })
+    })
+    test("GET 400 - returns a bad request error when given an invalid id", () => {
+        return request(app)
+        .get("/api/reviews/hello")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request")
+        })
+    })
   test("GET 200 - returns a review object corresponding to the given review id", () => {
     return request(app)
       .get("/api/reviews/9")
