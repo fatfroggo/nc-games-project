@@ -8,6 +8,7 @@ const {
   patchReviewById,
   postComments,
 } = require("./controllers/rewiews.controllers.js");
+const { getUsers } = require("./controllers/users.controllers.js")
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,8 @@ app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewsById);
+
+app.get("/api/users", getUsers)
 
 app.patch("/api/reviews/:review_id", patchReviewById);
 
