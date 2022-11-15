@@ -1,8 +1,5 @@
-const { fs } = require("fs")
+const apiJSON = require("../../endpoints.json")
 
 exports.readJSON = () => {
-    fs.readFile("../../endpoints.json")
-    .then((result) => {
-        return result
-    })
+    return apiJSON
 }
