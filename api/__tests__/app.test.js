@@ -85,6 +85,14 @@ describe("/api/reviews?category", () => {
         });
       });
   });
+  test("Returns an empy array when given a category which has no related reviews", () => {
+    return request(app)
+    .get("/api/reviews?category=children's%20games")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.reviews.length).toBe(0)
+    })
+  })
   test("Returns a 404 not found error when given an invalid category query", () => {
     return request(app)
     .get("/api/reviews?category=farmland")
