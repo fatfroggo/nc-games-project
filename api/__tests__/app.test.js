@@ -162,3 +162,45 @@ describe("/api/reviews/review:id", () => {
         })
     })
   });
+
+  describe("Adds a comment to a given review", () => {
+    test("POST - 201, adds a comment to a given review and returns that comment", () => {
+      return request(app)
+      .post("/api/reviews/5/comments")
+      .send({
+        username: "dav3rid",
+        body: "This is a great game!"
+      })
+      .expect(201)
+      .then((res) => {
+        expect(res.body.comment).toEqual({
+          author: "dav3rid", 
+          body: "This is a great game!", 
+          review_id: 5,
+          comment_id: 7,
+          votes: expect.any(Number),
+          created_at: expect.any(String)
+        })
+      })
+    })
+    test("POST - 404, returns a 404 error when given a valid but non-existent review_id", () => {
+      return request(app)
+      .post("/api/reviews/90/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not found")
+      })
+    })
+    test("POST - 400, returns a 400 error if the given comment does not meet the input requirements", () => {
+      return request(app)
+        .post("/api/reviews/5/comments")
+        .send({
+          user: "dav3rid",
+          body: "This is a great game!"
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request")
+        })
+    })
+  })
