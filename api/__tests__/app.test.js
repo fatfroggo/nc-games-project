@@ -432,3 +432,28 @@ describe("Adds a comment to a given review", () => {
       });
   });
 });
+
+
+describe("Delete a comment when given a valid comment id", () => {
+  test("Deletes a comment when given a comment id", () => {
+    return request(app)
+    .delete("/api/comments/2")
+    .expect(204)
+  })
+  test("Returns a 404 not found if provided a valid but non existent comment id", () => {
+    return request(app)
+    .delete("/api/comments/50")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Not found")
+    })
+  })
+  test("Returns a 400 bad request if provided an invalid comment id", () => {
+    return request(app)
+    .delete("/api/comments/hello")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Bad request")
+    })
+  })
+})
