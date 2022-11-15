@@ -4,14 +4,22 @@ const {
   selectReviewsById, addComments,
 } = require("../models/reviews.models.js");
 
+const { selectCategories } = require("../models/categories.models.js")
+
 exports.getReviews = (req, res, next) => {
-  selectReviews()
+    const { category, sort_by, order } = req.query;
+
+    selectCategories(category)
+    .then(() => {
+        return selectReviews(sort_by, order, category)
+    })
     .then((reviews) => {
-      res.status(200).send({ reviews });
+        console.log(reviews)
+        res.status(200).send({ reviews })
     })
     .catch((err) => {
-      next(err);
-    });
+        next(err);
+      });
 };
 
 exports.getReviewComments = (req, res, next) => {

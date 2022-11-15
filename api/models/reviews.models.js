@@ -1,15 +1,32 @@
 const db = require("../../db/connection.js");
 
-exports.selectReviews = () => {
-  return db
-    .query(
-      `
-    SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.review_id)::int AS comment_count 
-    FROM reviews 
-    JOIN users ON users.username = reviews.owner LEFT JOIN comments ON comments.review_id = reviews.review_id 
-    GROUP BY reviews.review_id ORDER BY created_at DESC;
-    `
-    )
+exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
+  const validColumns = ["review_id", "title", "category", "designer", "review_body", "review_img_url", "created_at", "votes"]
+  
+  const validOrders = ["ASC", "DESC"]
+
+  if(!validColumns.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort query" })
+  }
+
+  if(!validOrders.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order query" })
+  }
+
+  let queryStr = `SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.review_id)::int AS comment_count 
+  FROM reviews 
+  JOIN users ON users.username = reviews.owner LEFT JOIN comments ON comments.review_id = reviews.review_id `
+
+  let queryValues = []
+
+  if(category) {
+      queryStr += `WHERE category = $1 `
+      queryValues.push(category)
+  }
+
+  queryStr += `GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`
+  console.log(order, "order")
+  return db.query(queryStr, queryValues)
     .then((result) => {
       return result.rows;
     });
