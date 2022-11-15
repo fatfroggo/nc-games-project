@@ -35,3 +35,18 @@ exports.selectReviewsById = (review_id) => {
       }
     });
 };
+
+exports.updateReviews = (review_id, incVotes) => {
+  
+  return db.query(`
+    UPDATE reviews SET votes = (votes + $1) WHERE review_id = $2 RETURNING *;
+  `, [incVotes, review_id])
+  .then((result) => {
+    if(result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Not found"})
+    }
+    else {
+      return result.rows[0]
+    }
+  })
+}

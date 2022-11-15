@@ -112,3 +112,70 @@ describe("/api/reviews/review:id", () => {
         })
     })
   });
+
+  describe("Update a given review", () => {
+    test("PATCH 202 - increases a review's votes by the given number", () => {
+      return request(app)
+      .patch("/api/reviews/6")
+      .send({
+        incVotes: 2
+      })
+      .expect(202)
+      .then((res) => {
+        expect(res.body.review).toEqual({
+          owner: expect.any(String),
+          title: expect.any(String),
+          review_id: 6,
+          category: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: 10,
+          designer: expect.any(String),
+          review_body: expect.any(String)
+        })
+      })
+    })
+    test("PATCH 202 - descreases a review's votes by the given number", () => {
+      return request(app)
+      .patch("/api/reviews/6")
+      .send({
+        incVotes: -6
+      })
+      .expect(202)
+      .then((res) => {
+        expect(res.body.review).toEqual({
+          owner: expect.any(String),
+          title: expect.any(String),
+          review_id: 6,
+          category: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: 2,
+          designer: expect.any(String),
+          review_body: expect.any(String)
+        })
+      })
+    })
+    test("PATCH 404 - returns a not found error if given a review_id which does not exist", () => {
+      return request(app)
+        .patch("/api/reviews/50")
+        .send({
+          incVotes: -6
+        })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not found")
+        })
+    })
+    test("Patch 400 - returns a bad request error when given an invalid id", () => {
+      return request(app)
+      .patch("/api/reviews/hello")
+      .send({
+        incVotes: -6
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request")
+      })
+  })
+  })
