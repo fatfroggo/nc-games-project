@@ -84,13 +84,14 @@ describe("/api/reviews/review:id", () => {
             expect.objectContaining({
               review_id: 9,
               title: 'A truly Quacking Game; Quacks of Quedlinburg',
-              review_body: "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
-              designer: 'Wolfgang Warsch',
-              review_img_url: 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+              review_body: expect.any(String),
+              designer: expect.any(String),
+              review_img_url: expect.any(String),
               votes: 10,
               category: 'social deduction',
               owner: 'mallionaire',
               created_at: expect.any(String),
+              comment_count: expect.any(Number)
             })
           );
         });
