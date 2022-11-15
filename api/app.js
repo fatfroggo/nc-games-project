@@ -2,13 +2,15 @@ const express = require("express");
 
 const { getCategories } = require("./controllers/categories.controllers.js");
 const {
-  getReviews, getReviewComments,
+  getReviews,
+  getReviewComments,
   getReviewsById,
-  postComments
+  patchReviewById,
+  postComments,
 } = require("./controllers/rewiews.controllers.js");
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
@@ -16,10 +18,11 @@ app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewsById);
 
-app.get("/api/reviews/:review_id/comments", getReviewComments)
+app.patch("/api/reviews/:review_id", patchReviewById);
 
-app.post("/api/reviews/:review_id/comments", postComments)
+app.get("/api/reviews/:review_id/comments", getReviewComments);
 
+app.post("/api/reviews/:review_id/comments", postComments);
 
 app.use((err, req, res, next) => {
   if (err.status) {
@@ -30,12 +33,12 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    if(err.code === '22P02') {
-        res.status(400).send({msg: 'Bad request'})
-    } else {
-        next(err)
-    }
-})
+  if (err.code === "22P02" || err.code === "23502") {
+    res.status(400).send({ msg: "Bad request" });
+  } else {
+    next(err);
+  }
+});
 
 app.use((err, req, res, next) => {
   console.log(err, "internal server error"); // this log is intentional and acts as an error handler

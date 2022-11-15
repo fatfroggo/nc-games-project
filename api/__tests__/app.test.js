@@ -151,14 +151,16 @@ describe("/api/reviews/:review_id/comments", () => {
         expect(comments).toBeInstanceOf(Array);
         comments.forEach((comment) => {
           expect(comment).toEqual(
+            
             expect.objectContaining({
-              comment_id: expect.any(Number),
-              votes: expect.any(Number),
-              created_at: expect.any(String),
-              author: expect.any(String),
-              body: expect.any(String),
-              review_id: expect.any(Number),
-            })
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                review_id: expect.any(Number),
+              })
+          
           );
         });
       });
@@ -170,17 +172,17 @@ describe("/api/reviews/:review_id/comments", () => {
       .then(({ body }) => {
         const { comments } = body;
         expect(comments).toBeInstanceOf(Array);
-        expect(comments.length).toBe(0);
-      });
-  });
+        expect(comments.length).toBe(0);;
+          });;
+    });;
   test("GET 400 - returns an error if given an invalid data type for review_id", () => {
     return request(app)
-      .get("/api/reviews/hello/comments")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request");
-      });
-  });
+        .get("/api/reviews/hello/comments")
+        .expect(400)
+        .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");;
+        });;
+  });;
   test("GET 404 - returns an error if given a valid but non existent input for review_id", () => {
     return request(app)
       .get("/api/reviews/999/comments")
@@ -232,6 +234,96 @@ describe("/api/reviews/review:id", () => {
       });
   });
 });
+
+describe("Update a given review", () => {
+  test("PATCH 202 - increases a review's votes by the given number", () => {
+    return request(app)
+      .patch("/api/reviews/6")
+      .send({
+        incVotes: 2,
+      })
+      .expect(202)
+      .then((res) => {
+        expect(res.body.review).toEqual({
+          owner: expect.any(String),
+          title: expect.any(String),
+          review_id: 6,
+          category: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: 10,
+          designer: expect.any(String),
+          review_body: expect.any(String),
+        });
+      });
+  });
+  test("PATCH 202 - descreases a review's votes by the given number", () => {
+    return request(app)
+      .patch("/api/reviews/6")
+      .send({
+        incVotes: -6,
+      })
+      .expect(202)
+      .then((res) => {
+        expect(res.body.review).toEqual({
+          owner: expect.any(String),
+          title: expect.any(String),
+          review_id: 6,
+          category: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: 2,
+          designer: expect.any(String),
+          review_body: expect.any(String),
+        });
+      });
+  });
+  test("PATCH 404 - returns a not found error if given a review_id which does not exist", () => {
+    return request(app)
+      .patch("/api/reviews/50")
+      .send({
+        incVotes: -6,
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not found");
+      });
+  });
+  test("Patch 400 - returns a bad request error when given an invalid id", () => {
+    return request(app)
+      .patch("/api/reviews/hello")
+      .send({
+        incVotes: -6,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  test("Patch 400 - returns a bad request error when given an invalid key", () => {
+    return request(app)
+      .patch("/api/reviews/6")
+      .send({
+        incVes: -6,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  test("Patch 400 - returns a bad request error when given an incVotes which is not a number", () => {
+    return request(app)
+      .patch("/api/reviews/6")
+      .send({
+        incVotes: "hello",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+});
+
 
 describe("Adds a comment to a given review", () => {
   test("POST - 201, adds a comment to a given review and returns that comment", () => {
