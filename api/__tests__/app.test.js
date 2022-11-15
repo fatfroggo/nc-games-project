@@ -254,9 +254,29 @@ describe("Update a given review", () => {
   });
 });
 
-describe("Adds a comment to a given review", () => {
-  test("POST - 201, adds a comment to a given review and returns that comment", () => {
-    return request(app)
+  describe("/api/users", () => {
+    test("GET 200 - returns an array of user objects in the correct format", () => {
+      return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array)
+        expect(users.length).toBe(4)
+        users.forEach((user) => {
+          expect.objectContaining({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String)
+          })
+        })
+      })
+    })
+  })
+
+  describe("Adds a comment to a given review", () => {
+    test("POST - 201, adds a comment to a given review and returns that comment", () => {
+      return request(app)
       .post("/api/reviews/5/comments")
       .send({
         username: "dav3rid",
