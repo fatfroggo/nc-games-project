@@ -8,6 +8,7 @@ const {
   reviewData,
   userData,
 } = require("../../db/data/test-data/index.js");
+const apiJSON = require("../../endpoints.json")
 
 beforeEach(() => {
   return seed({ categoryData, commentData, reviewData, userData });
@@ -412,3 +413,14 @@ describe("Delete a comment when given a valid comment id", () => {
       });
   });
 });
+
+describe.only("GET /api", () => {
+  test("Responds with a JSON object containing information about the various endpoints in the database", () => {
+    return request(app)
+    .get("/api")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body).toEqual(apiJSON)
+    })
+  })
+})

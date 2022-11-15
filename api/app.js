@@ -10,6 +10,7 @@ const {
 } = require("./controllers/rewiews.controllers.js");
 const { getUsers } = require("./controllers/users.controllers.js")
 const { deleteComment } =require("./controllers/comments.controllers.js")
+const { getJSON } = require("./controllers/api.controllers.js")
 
 const app = express();
 app.use(express.json());
@@ -29,6 +30,8 @@ app.get("/api/reviews/:review_id/comments", getReviewComments);
 app.post("/api/reviews/:review_id/comments", postComments);
 
 app.delete("/api/comments/:comment_id",deleteComment)
+
+app.get("/api", getJSON)
 
 app.use((err, req, res, next) => {
   if (err.status) {
