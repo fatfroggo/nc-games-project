@@ -63,12 +63,88 @@ describe("/api/reviews", () => {
         });
       });
   });
-  test("Response array is sorted by descending date", () => {
+  test("Response array is sorted by descending date by default", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
         expect(body.reviews).toBeSortedBy("created_at", { coerce: true });
+      });
+  });
+});
+
+describe("/api/reviews?category", () => {
+  test("Accepts a category query", () => {
+    return request(app)
+      .get("/api/reviews?category=dexterity")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews.length).toBe(1);
+        body.reviews.forEach((review) => {
+          expect(review.category).toBe("dexterity");
+        });
+      });
+  });
+  test("Returns an empy array when given a category which has no related reviews", () => {
+    return request(app)
+    .get("/api/reviews?category=children's%20games")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.reviews.length).toBe(0)
+    })
+  })
+  test("Returns a 404 not found error when given an invalid category query", () => {
+    return request(app)
+    .get("/api/reviews?category=farmland")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Not found")
+    })
+  })
+  test("Returns a 404 not found error when given an invalid category query", () => {
+    return request(app)
+    .get("/api/reviews?category=7")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Not found")
+    })
+  })
+});
+
+describe("/api/reviews?sort_by", () => {
+  test("GET 200 - returns an array of sorted reviews when given a valid sort by query", () => {
+    return request(app)
+    .get("/api/reviews?sort_by=designer")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.reviews).toBeSortedBy("designer", { descending: true })
+    })
+  })
+  test("GET 400 - invalid sort query", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=something_bad")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sort query");
+      });
+  });
+})
+
+describe("/api/reviews?order", () => {
+  test("GET 200 : response object is sorted by date ascending", () => {
+    return request(app)
+      .get("/api/reviews?order=ASC")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews).toBeSortedBy("created_at");
+      });
+  });
+  test("GET 400 : invalid order query", () => {
+    return request(app)
+      .get("/api/reviews?order=up")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order query");
       });
   });
 });
@@ -83,14 +159,16 @@ describe("/api/reviews/:review_id/comments", () => {
         expect(comments).toBeInstanceOf(Array);
         comments.forEach((comment) => {
           expect(comment).toEqual(
+            
             expect.objectContaining({
-              comment_id: expect.any(Number),
-              votes: expect.any(Number),
-              created_at: expect.any(String),
-              author: expect.any(String),
-              body: expect.any(String),
-              review_id: expect.any(Number),
-            })
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                review_id: expect.any(Number),
+              })
+          
           );
         });
       });
@@ -102,17 +180,17 @@ describe("/api/reviews/:review_id/comments", () => {
       .then(({ body }) => {
         const { comments } = body;
         expect(comments).toBeInstanceOf(Array);
-        expect(comments.length).toBe(0);
-      });
-  });
+        expect(comments.length).toBe(0);;
+          });;
+    });;
   test("GET 400 - returns an error if given an invalid data type for review_id", () => {
     return request(app)
-      .get("/api/reviews/hello/comments")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request");
-      });
-  });
+        .get("/api/reviews/hello/comments")
+        .expect(400)
+        .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");;
+        });;
+  });;
   test("GET 404 - returns an error if given a valid but non existent input for review_id", () => {
     return request(app)
       .get("/api/reviews/999/comments")
@@ -312,7 +390,8 @@ describe("Update a given review", () => {
     })
   })
 
-  describe("Adds a comment to a given review", () => {
+  
+describe("Adds a comment to a given review", () => {
     test("POST - 201, adds a comment to a given review and returns that comment", () => {
       return request(app)
       .post("/api/reviews/5/comments")
