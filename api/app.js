@@ -5,6 +5,7 @@ const {
   getReviews,
   getReviewsById,
 } = require("./controllers/rewiews.controllers.js");
+const { getUsers } = require("./controllers/users.controllers.js")
 
 const app = express();
 
@@ -13,6 +14,8 @@ app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewsById);
+
+app.get("/api/users", getUsers)
 
 app.use((err, req, res, next) => {
   if (err.status) {
