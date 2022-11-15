@@ -9,6 +9,7 @@ const {
   postComments,
 } = require("./controllers/rewiews.controllers.js");
 const { getUsers } = require("./controllers/users.controllers.js")
+const { getJSON } = require("./controllers/api.controllers.js")
 
 const app = express();
 app.use(express.json());
@@ -26,6 +27,8 @@ app.patch("/api/reviews/:review_id", patchReviewById);
 app.get("/api/reviews/:review_id/comments", getReviewComments);
 
 app.post("/api/reviews/:review_id/comments", postComments);
+
+app.get("/api", getJSON)
 
 app.use((err, req, res, next) => {
   if (err.status) {

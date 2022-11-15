@@ -9,6 +9,7 @@ const {
   userData,
 } = require("../../db/data/test-data/index.js");
 
+
 beforeEach(() => {
   return seed({ categoryData, commentData, reviewData, userData });
 });
@@ -353,3 +354,15 @@ describe("Update a given review", () => {
       });
   });
 });
+
+
+describe("GET /api", () => {
+  test("Responds with a JSON object describng the available endpoints for the API", () => {
+    return request(app)
+    .get("/api")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body).toBe("hi")
+    })
+  })
+})
