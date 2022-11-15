@@ -2,7 +2,7 @@ const express = require("express");
 
 const { getCategories } = require("./controllers/categories.controllers.js");
 const {
-  getReviews,
+  getReviews, getReviewComments,
   getReviewsById,
   postComments
 } = require("./controllers/rewiews.controllers.js");
@@ -16,7 +16,10 @@ app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewsById);
 
+app.get("/api/reviews/:review_id/comments", getReviewComments)
+
 app.post("/api/reviews/:review_id/comments", postComments)
+
 
 app.use((err, req, res, next) => {
   if (err.status) {
