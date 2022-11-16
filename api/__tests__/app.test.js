@@ -414,7 +414,7 @@ describe("Delete a comment when given a valid comment id", () => {
   });
 });
 
-describe.skip("GET /api", () => {
+describe("GET /api", () => {
   test("Responds with a JSON object containing information about the various endpoints in the database", () => {
     return request(app)
       .get("/api")
@@ -444,18 +444,18 @@ describe("GET /api/users/:username", () => {
   });
   test("GET 404 - return a not found error when given a valid username which does not exist in the data", () => {
     return request(app)
-    .get("/api/reviews/90")
+    .get("/api/users/fatfroggo")
     .expect(404)
     .then(({ body }) => {
       expect(body.msg).toEqual("Not found");
     });
   })
-  test("GET 400 - return a bad request error when given a username of the wrong data type", () => {
+  test("GET 404 - return a not found error when given an invalid username", () => {
     return request(app)
-    .get("/api/reviews/hello")
-    .expect(400)
+    .get("/api/users/12")
+    .expect(404)
     .then(({ body }) => {
-      expect(body.msg).toEqual("Bad request");
+      expect(body.msg).toEqual("Not found");
     });
   })
 });
