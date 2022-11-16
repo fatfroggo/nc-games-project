@@ -28,6 +28,7 @@ Please ensure all dependencies are installed in order to utilise the repo.
 
  A script has been added to the package.json in order to seed the databases. To run this, run
 
+ ```npm run setup-dbs```
  ```npm run seed``` 
 
  in the terminal.
