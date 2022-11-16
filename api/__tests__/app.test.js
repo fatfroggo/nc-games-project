@@ -444,23 +444,23 @@ describe("GET /api/users/:username", () => {
   });
   test("GET 404 - return a not found error when given a valid username which does not exist in the data", () => {
     return request(app)
-    .get("/api/users/fatfroggo")
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).toEqual("Not found");
-    });
-  })
+      .get("/api/users/fatfroggo")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not found");
+      });
+  });
   test("GET 404 - return a not found error when given an invalid username", () => {
     return request(app)
-    .get("/api/users/12")
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).toEqual("Not found");
-    });
-  })
-})
+      .get("/api/users/12")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not found");
+      });
+  });
+});
 
-describe.only("Update a given comment", () => {
+describe("Update a given comment", () => {
   test("PATCH 202 - increases a comments votes by the given number", () => {
     return request(app)
       .patch("/api/comments/4")
@@ -475,7 +475,7 @@ describe.only("Update a given comment", () => {
           author: expect.any(String),
           review_id: expect.any(Number),
           created_at: expect.any(String),
-          comment_id: 4
+          comment_id: 4,
         });
       });
   });
@@ -493,7 +493,7 @@ describe.only("Update a given comment", () => {
           author: expect.any(String),
           review_id: expect.any(Number),
           created_at: expect.any(String),
-          comment_id: 4
+          comment_id: 4,
         });
       });
   });
@@ -535,6 +535,49 @@ describe.only("Update a given comment", () => {
       .patch("/api/comments/6")
       .send({
         incVotes: "hello",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+});
+
+describe.only("Adds a review", () => {
+  test("POST - 201, adds a review and returns that review", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+       owner: "bainesface",
+       title: "Wallace and Gromit",
+       review_body: "Loved this game!",
+       designer: "Fat Froggo",
+       category: "children's games"
+      })
+      .expect(201)
+      .then((res) => {
+        expect(res.body.review).toEqual({
+          owner: "bainesface",
+          title: "Wallace and Gromit",
+          review_body: "Loved this game!",
+          designer: "Fat Froggo",
+          category: "children's games",
+          review_id: 14,
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: 0,
+          review_img_url: expect.any(String)
+        });
+      });
+  });
+  test("POST - 400, returns a 400 error if the given review does not meet the input requirements", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        owner: "bainesface",
+        title: "Wallace and Gromit",
+        review_body: "Loved this game!",
+        category: "children's games"
       })
       .expect(400)
       .then(({ body }) => {

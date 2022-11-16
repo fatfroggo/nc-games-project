@@ -103,3 +103,23 @@ exports.selectReviewComments = (review_id) => {
       return result.rows;
     });
 };
+
+exports.addReviews = (newReview) => {
+  if ("owner" in newReview && "review_body" in newReview && "title" in newReview && "designer" in newReview && "category" in newReview){
+    return db
+      .query(
+        `
+    INSERT INTO reviews (owner, review_body, title, designer, category, comment_count)
+    VALUES
+    ($1, $2, $3, $4, $5, $6)
+    RETURNING *
+  `,
+        [newReview.owner, newReview.review_body, newReview.title, newReview.designer, newReview.category, 0]
+      )
+      .then((result) => {
+        return result.rows[0];
+      });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+};

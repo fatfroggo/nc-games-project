@@ -1,4 +1,4 @@
-const { getReviews, getReviewsById, patchReviewById, getReviewComments, postComments } = require("../controllers/rewiews.controllers")
+const { getReviews, getReviewsById, patchReviewById, getReviewComments, postComments, postReviews } = require("../controllers/rewiews.controllers")
 
 const reviewsRouter = require("express").Router()
 
@@ -11,5 +11,7 @@ reviewsRouter.patch("/:review_id", patchReviewById)
 reviewsRouter.get("/:review_id/comments", getReviewComments)
 
 reviewsRouter.post("/:review_id/comments", postComments)
+
+reviewsRouter.post("/", postReviews)
 
 module.exports = reviewsRouter

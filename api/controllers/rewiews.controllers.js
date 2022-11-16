@@ -4,9 +4,11 @@ const {
   selectReviewsById,
   updateReviews,
   addComments,
+  addReviews
 } = require("../models/reviews.models.js");
 
-const { selectCategories } = require("../models/categories.models.js")
+const { selectCategories } = require("../models/categories.models.js");
+const { selectUserByUsername } = require("../models/users.models.js");
 
 exports.getReviews = (req, res, next) => {
     const { category, sort_by, order } = req.query;
@@ -73,3 +75,18 @@ exports.postComments = (req, res, next) => {
     })
     .catch((next));
 };
+
+exports.postReviews = (req, res, next) => {
+  const newReview = req.body;
+  selectUserByUsername(newReview.owner)
+  .then(() => {
+    return selectCategories(newReview.category)
+  })
+  .then(() => {
+    return addReviews(newReview) 
+  })
+  .then((review) => {
+    res.status(201).send({review})
+  })
+  .catch((next))
+}
