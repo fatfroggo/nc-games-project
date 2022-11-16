@@ -16,7 +16,6 @@ exports.getReviews = (req, res, next) => {
         return selectReviews(sort_by, order, category)
     })
     .then((reviews) => {
-        console.log(reviews)
         res.status(200).send({ reviews })
     })
     .catch((err) => {
@@ -72,7 +71,5 @@ exports.postComments = (req, res, next) => {
     .then((comment) => {
       res.status(201).send({ comment });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch((next));
 };

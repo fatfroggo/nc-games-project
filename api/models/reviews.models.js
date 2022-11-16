@@ -25,7 +25,6 @@ exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
   }
 
   queryStr += `GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`
-  console.log(order, "order")
   return db.query(queryStr, queryValues)
     .then((result) => {
       return result.rows;
