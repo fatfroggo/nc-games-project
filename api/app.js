@@ -1,39 +1,13 @@
 const express = require("express");
-
-const { getCategories } = require("./controllers/categories.controllers.js");
-const {
-  getReviews,
-  getReviewComments,
-  getReviewsById,
-  patchReviewById,
-  postComments,
-} = require("./controllers/rewiews.controllers.js");
-const { getUsers, getUserByUsername } = require("./controllers/users.controllers.js")
-const { deleteComment } =require("./controllers/comments.controllers.js")
-const { getJSON } = require("./controllers/api.controllers.js")
+const apiRouter = require("../api/routers/api.routers.js")
 
 const app = express();
 app.use(express.json());
 
-app.get("/api/categories", getCategories);
-
-app.get("/api/reviews", getReviews);
-
-app.get("/api/reviews/:review_id", getReviewsById);
-
-app.get("/api/users", getUsers)
-
-app.patch("/api/reviews/:review_id", patchReviewById);
-
-app.get("/api/reviews/:review_id/comments", getReviewComments);
-
-app.post("/api/reviews/:review_id/comments", postComments);
-
-app.delete("/api/comments/:comment_id",deleteComment)
-
-app.get("/api", getJSON)
+app.use("/api", apiRouter)
 
 app.get("/api/users/:username", getUserByUsername)
+
 
 app.use((err, req, res, next) => {
   if (err.status) {
