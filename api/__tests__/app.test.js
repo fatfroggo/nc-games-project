@@ -8,7 +8,7 @@ const {
   reviewData,
   userData,
 } = require("../../db/data/test-data/index.js");
-const apiJSON = require("../../endpoints.json")
+const apiJSON = require("../../endpoints.json");
 
 beforeEach(() => {
   return seed({ categoryData, commentData, reviewData, userData });
@@ -414,13 +414,48 @@ describe("Delete a comment when given a valid comment id", () => {
   });
 });
 
-describe.only("GET /api", () => {
+describe.skip("GET /api", () => {
   test("Responds with a JSON object containing information about the various endpoints in the database", () => {
     return request(app)
-    .get("/api")
-    .expect(200)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual(apiJSON);
+      });
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  test("GET 200 - returns a single user when provided a valid username", () => {
+    return request(app)
+      .get("/api/users/philippaclaire9")
+      .expect(200)
+      .then(({ body }) => {
+        const { user } = body;
+        expect(user).toEqual(
+          expect.objectContaining({
+            username: "philippaclaire9",
+            name: "philippa",
+            avatar_url:
+              "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+          })
+        );
+      });
+  });
+  test("GET 404 - return a not found error when given a valid username which does not exist in the data", () => {
+    return request(app)
+    .get("/api/reviews/90")
+    .expect(404)
     .then(({ body }) => {
-      expect(body).toEqual(apiJSON)
-    })
+      expect(body.msg).toEqual("Not found");
+    });
   })
-})
+  test("GET 400 - return a bad request error when given a username of the wrong data type", () => {
+    return request(app)
+    .get("/api/reviews/hello")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toEqual("Bad request");
+    });
+  })
+});

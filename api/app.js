@@ -8,7 +8,7 @@ const {
   patchReviewById,
   postComments,
 } = require("./controllers/rewiews.controllers.js");
-const { getUsers } = require("./controllers/users.controllers.js")
+const { getUsers, getUserByUsername } = require("./controllers/users.controllers.js")
 const { deleteComment } =require("./controllers/comments.controllers.js")
 const { getJSON } = require("./controllers/api.controllers.js")
 
@@ -32,6 +32,8 @@ app.post("/api/reviews/:review_id/comments", postComments);
 app.delete("/api/comments/:comment_id",deleteComment)
 
 app.get("/api", getJSON)
+
+app.get("/api/users/:username", getUserByUsername)
 
 app.use((err, req, res, next) => {
   if (err.status) {
