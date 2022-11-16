@@ -20,10 +20,9 @@ command in your teminal, to clone the repo into a folder of your choice on your 
 
 ## Installing dependencies 
 
-Please ensure supertest and express modules are installed in order to utilise the repo.
+Please ensure all dependencies are installed in order to utilise the repo.
 
-``` npm install supertest```
-``` npm install express```
+``` npm i```
 
 ## Seeding the local databases
 
