@@ -414,7 +414,7 @@ describe("Delete a comment when given a valid comment id", () => {
   });
 });
 
-describe.only("GET /api", () => {
+describe("GET /api", () => {
   test("Responds with a JSON object containing information about the various endpoints in the database", () => {
     return request(app)
     .get("/api")
@@ -424,3 +424,86 @@ describe.only("GET /api", () => {
     })
   })
 })
+
+describe.only("Update a given comment", () => {
+  test("PATCH 202 - increases a comments votes by the given number", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({
+        incVotes: 2,
+      })
+      .expect(202)
+      .then((res) => {
+        expect(res.body.comment).toEqual({
+          body: expect.any(String),
+          votes: 18,
+          author: expect.any(String),
+          review_id: expect.any(Number),
+          created_at: expect.any(String),
+          comment_id: 4
+        });
+      });
+  });
+  test("PATCH 202 - descreases a comment's votes by the given number", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({
+        incVotes: -6,
+      })
+      .expect(202)
+      .then((res) => {
+        expect(res.body.comment).toEqual({
+          body: expect.any(String),
+          votes: 10,
+          author: expect.any(String),
+          review_id: expect.any(Number),
+          created_at: expect.any(String),
+          comment_id: 4
+        });
+      });
+  });
+  test("PATCH 404 - returns a not found error if given a comment_id which does not exist", () => {
+    return request(app)
+      .patch("/api/comments/50")
+      .send({
+        incVotes: -6,
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not found");
+      });
+  });
+  test("Patch 400 - returns a bad request error when given an invalid id", () => {
+    return request(app)
+      .patch("/api/comments/hello")
+      .send({
+        incVotes: -6,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  test("Patch 400 - returns a bad request error when given an invalid key", () => {
+    return request(app)
+      .patch("/api/comments/6")
+      .send({
+        incVes: -6,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  test("Patch 400 - returns a bad request error when given an incVotes which is not a number", () => {
+    return request(app)
+      .patch("/api/comments/6")
+      .send({
+        incVotes: "hello",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+});
