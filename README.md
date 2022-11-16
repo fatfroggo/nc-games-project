@@ -14,7 +14,7 @@ In order to clone this repository, use the
 
 ```git clone https://github.com/fatfroggo/nc-games-project.git1```
 
-command in your teminal, to clone the repo into a folder of your choice on your local device. Following this, ensure the repository has been initialised by running 
+command in your terminal, to clone the repo into a folder of your choice on your local device. Following this, ensure the repository has been initialised by running 
 
 ```npm itit -y```
 
@@ -44,7 +44,7 @@ Ensure jest is installed in your repository. Please run
 ```npm install jest -D```
 
 Following this. Tests can be run by running the 
-```npm test``` command in termanal. 
+```npm test``` command in terminal. 
 
 ## Minimum system requirements
 
