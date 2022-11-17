@@ -1,6 +1,6 @@
 const db = require("../../db/connection.js");
 
-exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
+exports.selectReviews = (sort_by = "created_at", order = "DESC", limit = 10, p = 1, category) => {
   const validColumns = ["review_id", "title", "category", "designer", "review_body", "review_img_url", "created_at", "votes"]
   
   const validOrders = ["ASC", "DESC"]
@@ -13,7 +13,7 @@ exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
     return Promise.reject({ status: 400, msg: "Invalid order query" })
   }
 
-  let queryStr = `SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.review_id)::int AS comment_count 
+  let queryStr = `SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.review_id)::int AS comment_count
   FROM reviews 
   JOIN users ON users.username = reviews.owner LEFT JOIN comments ON comments.review_id = reviews.review_id `
 
@@ -24,7 +24,7 @@ exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
       queryValues.push(category)
   }
 
-  queryStr += `GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`
+  queryStr += `GROUP BY reviews.review_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${(p - 1) * limit};`
   return db.query(queryStr, queryValues)
     .then((result) => {
       return result.rows;
@@ -91,13 +91,13 @@ exports.addComments = (newComment, review_id) => {
   }
 };
 
-exports.selectReviewComments = (review_id) => {
+exports.selectReviewComments = (review_id, limit = 10, p = 1) => {
   return db
     .query(
       `
-    SELECT * FROM comments JOIN users ON users.username = comments.author WHERE review_id = $1 ORDER BY created_at DESC;
+    SELECT * FROM comments JOIN users ON users.username = comments.author WHERE review_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET ($2 * ($3 - 1));
     `,
-      [review_id]
+      [review_id, limit, p]
     )
     .then((result) => {
       return result.rows;
@@ -109,12 +109,12 @@ exports.addReviews = (newReview) => {
     return db
       .query(
         `
-    INSERT INTO reviews (owner, review_body, title, designer, category, comment_count)
+    INSERT INTO reviews (owner, review_body, title, designer, category)
     VALUES
-    ($1, $2, $3, $4, $5, $6)
-    RETURNING *
+    ($1, $2, $3, $4, $5)
+    RETURNING *;
   `,
-        [newReview.owner, newReview.review_body, newReview.title, newReview.designer, newReview.category, 0]
+        [newReview.owner, newReview.review_body, newReview.title, newReview.designer, newReview.category]
       )
       .then((result) => {
         return result.rows[0];
@@ -123,3 +123,14 @@ exports.addReviews = (newReview) => {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 };
+
+exports.removeReviews = (review_id) => {
+  return db.query(`
+    DELETE FROM reviews WHERE review_id = $1 RETURNING *
+    `, [review_id])
+    .then((result) => {
+        if (!result.rows[0])
+          return Promise.reject({ status: 404, msg: "Not found" });
+        else return result.rows[0];
+      });
+}

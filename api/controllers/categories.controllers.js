@@ -1,4 +1,4 @@
-const { selectCategories } = require("../models/categories.models.js")
+const { selectCategories, addCategory } = require("../models/categories.models.js")
 
 exports.getCategories = (req, res, next) => {
     selectCategories()
@@ -8,4 +8,13 @@ exports.getCategories = (req, res, next) => {
     .catch((err) => {
         next(err)
     })
+}
+
+exports.postCategory = (req, res, next) => {
+    const newCategory = req.body
+    addCategory(newCategory)
+    .then((category) => {
+        res.status(201).send({ category })
+    })
+    .catch((next))
 }

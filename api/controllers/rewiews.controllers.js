@@ -4,18 +4,18 @@ const {
   selectReviewsById,
   updateReviews,
   addComments,
-  addReviews
+  addReviews,
+  removeReviews
 } = require("../models/reviews.models.js");
 
 const { selectCategories } = require("../models/categories.models.js");
 const { selectUserByUsername } = require("../models/users.models.js");
 
 exports.getReviews = (req, res, next) => {
-    const { category, sort_by, order } = req.query;
-
+    const { category, sort_by, order, limit, p } = req.query;
     selectCategories(category)
     .then(() => {
-        return selectReviews(sort_by, order, category)
+        return selectReviews(sort_by, order, limit, p, category)
     })
     .then((reviews) => {
         res.status(200).send({ reviews })
@@ -27,9 +27,10 @@ exports.getReviews = (req, res, next) => {
 
 exports.getReviewComments = (req, res, next) => {
   const { review_id } = req.params;
+  const { limit, p } = req.query
   selectReviewsById(review_id)
     .then(() => {
-      return selectReviewComments(review_id);
+      return selectReviewComments(review_id, limit, p);
     })
     .then((comments) => {
       res.status(200).send({ comments });
@@ -87,6 +88,15 @@ exports.postReviews = (req, res, next) => {
   })
   .then((review) => {
     res.status(201).send({review})
+  })
+  .catch((next))
+}
+
+exports.deleteReviews = (req, res, next) => {
+  const { review_id } = req.params
+  removeReviews(review_id)
+  .then((result) => {
+    res.sendStatus(204)
   })
   .catch((next))
 }

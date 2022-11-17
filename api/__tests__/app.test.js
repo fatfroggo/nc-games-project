@@ -39,14 +39,14 @@ describe("/api/categories", () => {
 });
 
 describe("/api/reviews", () => {
-  test("GET 200 - Responds with an array of review objects in the correct format", () => {
+  test("GET 200 - Responds with an array of review objects in the correct format, with a default limit of 10", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
         expect(reviews).toBeInstanceOf(Array);
-        expect(reviews.length).toBe(13);
+        expect(reviews.length).toBe(10);
         reviews.forEach((review) => {
           expect(review).toEqual(
             expect.objectContaining({
@@ -73,6 +73,27 @@ describe("/api/reviews", () => {
       });
   });
 });
+
+describe("Pagination - /api/reviews?limit", () => {
+  test("/api/reviews accepts a limit category which returns the correct number of items", () => {
+    return request(app)
+    .get("/api/reviews?limit=5")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.reviews.length).toBe(5)
+    })
+  })
+  test("/api/reviews accepts a page query", () => {
+    return request(app)
+    .get("/api/reviews?p=2")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.reviews.length).toBe(3)
+      expect(body.reviews[0].created_at).toBe('2021-01-07T09:06:08.077Z')
+      expect(body.reviews[2].created_at).toBe('1970-01-10T02:08:38.400Z')
+    })
+  })
+})
 
 describe("/api/reviews?category", () => {
   test("Accepts a category query", () => {
@@ -199,6 +220,34 @@ describe("/api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe("/api/reviews/:review_id/comments Pagination", () => {
+  test("Has a default limit of 10", () => {
+    return request(app)
+    .get("/api/reviews/2/comments")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.comments.length).toBeLessThanOrEqual(10)
+    })
+  })
+  test("Can accept a limit query", () => {
+    return request(app)
+    .get("/api/reviews/2/comments?limit=2")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.comments.length).toBe(2)
+    })
+  })
+  test("Can accept a page query", () => {
+    return request(app)
+    .get("/api/reviews/2/comments?limit=2&p=2")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.comments.length).toBe(1)
+      expect(body.comments[0].comment_id).toBe(4)
+    })
+  })
+})
 
 describe("/api/reviews/review:id", () => {
   test("GET 200 - returns a review object corresponding to the given review id", () => {
@@ -543,7 +592,7 @@ describe("Update a given comment", () => {
   });
 });
 
-describe.only("Adds a review", () => {
+describe("Adds a review", () => {
   test("POST - 201, adds a review and returns that review", () => {
     return request(app)
       .post("/api/reviews")
@@ -565,7 +614,6 @@ describe.only("Adds a review", () => {
           review_id: 14,
           votes: 0,
           created_at: expect.any(String),
-          comment_count: 0,
           review_img_url: expect.any(String)
         });
       });
@@ -582,6 +630,61 @@ describe.only("Adds a review", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toEqual("Bad request");
+      });
+  });
+});
+
+describe("Add a category", () => {
+  test("POST - 201, adds a category and returns the category object", () => {
+    return request(app)
+    .post("/api/categories")
+    .send({
+      slug: "sandbox explorers",
+      description: "explore to your hearts content!"
+    })
+    .expect(201)
+    .then((res) => {
+      expect(res.body.category).toEqual(
+        {
+          slug:  "sandbox explorers",
+          description: "explore to your hearts content!"
+        }
+      )
+    })
+  })
+  test("POST - 400, returns a 400 error if the given category does not meet the input requirements", () => {
+    return request(app)
+      .post("/api/categories")
+      .send({
+        slug:  "sandbox explorers"
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+})
+
+describe.only("Delete a review when given a valid review id", () => {
+  test("Deletes a review when given a review id", () => {
+    return request(app)
+    .delete("/api/reviews/2")
+    .expect(204);
+  });
+  test("Returns a 404 not found if provided a valid but non existent review id", () => {
+    return request(app)
+      .delete("/api/reviews/50")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
+  test("Returns a 400 bad request if provided an invalid review id", () => {
+    return request(app)
+      .delete("/api/reviews/hello")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });
