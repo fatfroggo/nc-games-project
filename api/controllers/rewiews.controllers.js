@@ -20,9 +20,7 @@ exports.getReviews = (req, res, next) => {
     .then((reviews) => {
         res.status(200).send({ reviews })
     })
-    .catch((err) => {
-        next(err);
-      });
+    .catch(next);
 };
 
 exports.getReviewComments = (req, res, next) => {
@@ -35,9 +33,7 @@ exports.getReviewComments = (req, res, next) => {
     .then((comments) => {
       res.status(200).send({ comments });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.getReviewsById = (req, res, next) => {
@@ -46,9 +42,7 @@ exports.getReviewsById = (req, res, next) => {
     .then((review) => {
       res.status(200).send({ review });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.patchReviewById = (req, res, next) => {
@@ -59,9 +53,7 @@ exports.patchReviewById = (req, res, next) => {
     .then((review) => {
       res.status(202).send({ review });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.postComments = (req, res, next) => {
@@ -74,7 +66,7 @@ exports.postComments = (req, res, next) => {
     .then((comment) => {
       res.status(201).send({ comment });
     })
-    .catch((next));
+    .catch(next);
 };
 
 exports.postReviews = (req, res, next) => {
@@ -89,7 +81,7 @@ exports.postReviews = (req, res, next) => {
   .then((review) => {
     res.status(201).send({review})
   })
-  .catch((next))
+  .catch(next)
 }
 
 exports.deleteReviews = (req, res, next) => {
@@ -98,5 +90,5 @@ exports.deleteReviews = (req, res, next) => {
   .then((result) => {
     res.sendStatus(204)
   })
-  .catch((next))
+  .catch(next)
 }

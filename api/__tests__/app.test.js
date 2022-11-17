@@ -665,7 +665,7 @@ describe("Add a category", () => {
   });
 })
 
-describe.only("Delete a review when given a valid review id", () => {
+describe("Delete a review when given a valid review id", () => {
   test("Deletes a review when given a review id", () => {
     return request(app)
     .delete("/api/reviews/2")

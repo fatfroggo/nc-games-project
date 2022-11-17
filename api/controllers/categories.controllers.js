@@ -5,9 +5,7 @@ exports.getCategories = (req, res, next) => {
     .then((categories) => {
         res.status(200).send({ categories })
     })
-    .catch((err) => {
-        next(err)
-    })
+    .catch(next)
 }
 
 exports.postCategory = (req, res, next) => {
@@ -16,5 +14,5 @@ exports.postCategory = (req, res, next) => {
     .then((category) => {
         res.status(201).send({ category })
     })
-    .catch((next))
+    .catch(next)
 }

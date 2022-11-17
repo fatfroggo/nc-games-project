@@ -6,9 +6,7 @@ exports.deleteComment = (req, res, next) => {
     .then((comment) => {
         res.sendStatus(204)
     })
-    .catch((err) => {
-        next(err)
-    })
+    .catch(next)
 }
 
 exports.patchComments = (req, res, next) => {
@@ -18,5 +16,5 @@ exports.patchComments = (req, res, next) => {
     .then((comment) => {
         res.status(202).send({ comment })
     })
-    .catch((next))
+    .catch(next)
 }
