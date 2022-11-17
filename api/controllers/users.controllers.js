@@ -3,6 +3,7 @@ const {
   selectUserByUsername,
   removeUser,
   updateUser,
+  addUser,
 } = require("../models/users.models.js");
 
 exports.getUsers = (req, res, next) => {
@@ -40,3 +41,12 @@ exports.patchUser = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.postUser = (req, res, next) => {
+  const newUser = req.body;
+  addUser(newUser)
+  .then((user) => {
+    res.status(201).send({ user })
+  })
+  .catch(next)
+}

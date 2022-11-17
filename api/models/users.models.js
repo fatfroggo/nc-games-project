@@ -62,3 +62,20 @@ exports.updateUser = (newUsername, username) => {
       });
   }
 };
+
+exports.addUser = (newUser) => {
+  if("username" in newUser && "name" in newUser && "avatar_url" in newUser) {
+    return db.query(`
+    INSERT INTO users (username, name, avatar_url)
+    VALUES 
+    ($1, $2, $3) RETURNING *;
+    `, [newUser.username, newUser.name, newUser.avatar_url])
+    .then((result) => {
+      return result.rows[0]
+    })
+  }
+  else{
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  
+}

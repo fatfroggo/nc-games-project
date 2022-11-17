@@ -747,3 +747,36 @@ describe("Update a username of a valid user", () => {
       });
   });
 });
+
+describe("Add a user", () => {
+  test("POST - 200, allows for the addition of a new user", () => {
+    return request(app)
+      .post("/api/users")
+      .send({
+        username: "fatfroggo",
+        name: "lily",
+        avatar_url:
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+      })
+      .expect(201)
+      .then((res) => {
+        expect(res.body.user).toEqual({
+          username: "fatfroggo",
+          name: "lily",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
+      });
+  });
+  test("POST - 400, returns a 400 error if the given user does not meet the input requirements", () => {
+    return request(app)
+      .post("/api/users")
+      .send({
+        username: "fatfroggo",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+});
