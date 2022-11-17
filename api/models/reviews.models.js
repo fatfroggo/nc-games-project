@@ -1,34 +1,50 @@
 const db = require("../../db/connection.js");
 
-exports.selectReviews = (sort_by = "created_at", order = "DESC", limit = 10, p = 1, category) => {
-  const validColumns = ["review_id", "title", "category", "designer", "review_body", "review_img_url", "created_at", "votes"]
-  
-  const validOrders = ["ASC", "DESC"]
+exports.selectReviews = (
+  sort_by = "created_at",
+  order = "DESC",
+  limit = 10,
+  p = 1,
+  category
+) => {
+  const validColumns = [
+    "review_id",
+    "title",
+    "category",
+    "designer",
+    "review_body",
+    "review_img_url",
+    "created_at",
+    "votes",
+  ];
 
-  if(!validColumns.includes(sort_by)) {
-    return Promise.reject({ status: 400, msg: "Invalid sort query" })
+  const validOrders = ["ASC", "DESC"];
+
+  if (!validColumns.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort query" });
   }
 
-  if(!validOrders.includes(order)) {
-    return Promise.reject({ status: 400, msg: "Invalid order query" })
+  if (!validOrders.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order query" });
   }
 
   let queryStr = `SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.review_id)::int AS comment_count
   FROM reviews 
-  JOIN users ON users.username = reviews.owner LEFT JOIN comments ON comments.review_id = reviews.review_id `
+  JOIN users ON users.username = reviews.owner LEFT JOIN comments ON comments.review_id = reviews.review_id `;
 
-  let queryValues = []
+  let queryValues = [];
 
-  if(category) {
-      queryStr += `WHERE category = $1 `
-      queryValues.push(category)
+  if (category) {
+    queryStr += `WHERE category = $1 `;
+    queryValues.push(category);
   }
 
-  queryStr += `GROUP BY reviews.review_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${(p - 1) * limit};`
-  return db.query(queryStr, queryValues)
-    .then((result) => {
-      return result.rows;
-    });
+  queryStr += `GROUP BY reviews.review_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${
+    (p - 1) * limit
+  };`;
+  return db.query(queryStr, queryValues).then((result) => {
+    return result.rows;
+  });
 };
 
 exports.selectReviewsById = (review_id) => {
@@ -105,7 +121,13 @@ exports.selectReviewComments = (review_id, limit = 10, p = 1) => {
 };
 
 exports.addReviews = (newReview) => {
-  if ("owner" in newReview && "review_body" in newReview && "title" in newReview && "designer" in newReview && "category" in newReview){
+  if (
+    "owner" in newReview &&
+    "review_body" in newReview &&
+    "title" in newReview &&
+    "designer" in newReview &&
+    "category" in newReview
+  ) {
     return db
       .query(
         `
@@ -114,7 +136,13 @@ exports.addReviews = (newReview) => {
     ($1, $2, $3, $4, $5)
     RETURNING *;
   `,
-        [newReview.owner, newReview.review_body, newReview.title, newReview.designer, newReview.category]
+        [
+          newReview.owner,
+          newReview.review_body,
+          newReview.title,
+          newReview.designer,
+          newReview.category,
+        ]
       )
       .then((result) => {
         return result.rows[0];
@@ -125,12 +153,16 @@ exports.addReviews = (newReview) => {
 };
 
 exports.removeReviews = (review_id) => {
-  return db.query(`
+  return db
+    .query(
+      `
     DELETE FROM reviews WHERE review_id = $1 RETURNING *
-    `, [review_id])
+    `,
+      [review_id]
+    )
     .then((result) => {
-        if (!result.rows[0])
-          return Promise.reject({ status: 404, msg: "Not found" });
-        else return result.rows[0];
-      });
-}
+      if (!result.rows[0])
+        return Promise.reject({ status: 404, msg: "Not found" });
+      else return result.rows[0];
+    });
+};
