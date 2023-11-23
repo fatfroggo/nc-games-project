@@ -3,7 +3,7 @@ const db = require("../../db/connection.js");
 exports.selectReviews = (
   sort_by = "created_at",
   order = "DESC",
-  limit = 10,
+  limit = 9,
   p = 1,
   category
 ) => {
